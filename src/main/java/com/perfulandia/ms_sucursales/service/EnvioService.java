@@ -2,6 +2,7 @@ package com.perfulandia.ms_sucursales.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,37 +29,31 @@ public class EnvioService {
     private static final String MS_NOTIFICACIONES_URL = "http://localhost:8089/api/v1/notificaciones";
     private static final String MS_INVENTARIO_URL = "http://localhost:8083/api/v1/inventario";
 
-    // Listar todos los envíos
     public List<Envio> findAll() {
         log.info("Listando todos los envios");
         return envioRepository.findAll();
     }
 
-    // Buscar envío por id
     public Optional<Envio> findById(Long id) {
         log.info("Buscando envio con id: {}", id);
         return envioRepository.findById(id);
     }
 
-    // Buscar envío por pedido
     public Optional<Envio> findByIdPedido(Long idPedido) {
         log.info("Buscando envio del pedido: {}", idPedido);
         return envioRepository.findByIdPedido(idPedido);
     }
 
-    // Buscar envíos por estado
     public List<Envio> findByEstado(EstadoEnvio estado) {
         log.info("Buscando envios con estado: {}", estado);
         return envioRepository.findByEstado(estado);
     }
 
-    // Buscar envíos por sucursal
     public List<Envio> findBySucursal(Long idSucursal) {
         log.info("Buscando envios de la sucursal: {}", idSucursal);
         return envioRepository.findBySucursalIdSucursal(idSucursal);
     }
 
-    // Crear envío
     public Envio save(Envio envio) {
         log.info("Creando envio para pedido: {}", envio.getIdPedido());
 
@@ -92,7 +87,6 @@ public class EnvioService {
         return guardado;
     }
 
-    // Actualizar estado del envío — Regla de negocio
     public Optional<Envio> actualizarEstado(Long id, EstadoEnvio nuevoEstado) {
         log.info("Actualizando estado del envio {} a {}", id, nuevoEstado);
         return envioRepository.findById(id).map(envio -> {
@@ -103,8 +97,12 @@ public class EnvioService {
             }
             envio.setEstado(nuevoEstado);
 
-            // Si el envío fue entregado, notificar a MS Pedidos
+            // Si el envío fue entregado, registrar fecha de entrega
             if (nuevoEstado.equals(EstadoEnvio.ENTREGADO)) {
+                envio.setFechaEntrega(LocalDateTime.now());
+                log.info("Fecha de entrega registrada para envio {}", id);
+
+                // Notificar a MS Pedidos
                 try {
                     restTemplate.put(
                         MS_PEDIDOS_URL + "/" + envio.getIdPedido() + "/estado?estado=ENTREGADO",
