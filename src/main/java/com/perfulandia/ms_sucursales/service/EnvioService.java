@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.perfulandia.ms_sucursales.dto.PedidoDTO;
 import com.perfulandia.ms_sucursales.model.Envio;
 import com.perfulandia.ms_sucursales.model.EstadoEnvio;
 import com.perfulandia.ms_sucursales.repository.EnvioRepository;
@@ -54,6 +55,7 @@ public class EnvioService {
         return envioRepository.findBySucursalIdSucursal(idSucursal);
     }
 
+    // Crear envío — igual que el profesor con PedidoDTO
     public Envio save(Envio envio) {
         log.info("Creando envio para pedido: {}", envio.getIdPedido());
 
@@ -66,11 +68,13 @@ public class EnvioService {
         }
 
         // Verificar que el pedido existe en MS Pedidos
-        try {
-            restTemplate.getForObject(MS_PEDIDOS_URL + "/" + envio.getIdPedido(), Object.class);
-            log.info("Pedido {} verificado correctamente", envio.getIdPedido());
-        } catch (Exception e) {
-            log.warn("MS Pedidos no disponible: {}. Creando envio en contingencia", e.getMessage());
+        String url = MS_PEDIDOS_URL + "/" + envio.getIdPedido();
+        PedidoDTO pedido = restTemplate.getForObject(url, PedidoDTO.class);
+
+        if (pedido != null) {
+            log.info("Pedido {} verificado. Cliente: {}", pedido.getIdPedido(), pedido.getIdCliente());
+        } else {
+            log.warn("Pedido {} no encontrado. Creando envio en contingencia", envio.getIdPedido());
         }
 
         Envio guardado = envioRepository.save(envio);
@@ -87,6 +91,7 @@ public class EnvioService {
         return guardado;
     }
 
+    // Actualizar estado del envío — Regla de negocio
     public Optional<Envio> actualizarEstado(Long id, EstadoEnvio nuevoEstado) {
         log.info("Actualizando estado del envio {} a {}", id, nuevoEstado);
         return envioRepository.findById(id).map(envio -> {
@@ -97,7 +102,7 @@ public class EnvioService {
             }
             envio.setEstado(nuevoEstado);
 
-            // Si el envío fue entregado, registrar fecha de entrega
+            // Si el envío fue entregado, registrar fecha y notificar
             if (nuevoEstado.equals(EstadoEnvio.ENTREGADO)) {
                 envio.setFechaEntrega(LocalDateTime.now());
                 log.info("Fecha de entrega registrada para envio {}", id);
@@ -110,7 +115,7 @@ public class EnvioService {
                     );
                     log.info("MS Pedidos notificado del estado ENTREGADO");
                 } catch (Exception e) {
-                    log.warn("MS Pedidos no disponible para actualizar estado: {}", e.getMessage());
+                    log.warn("MS Pedidos no disponible: {}", e.getMessage());
                 }
 
                 // Notificar a MS Notificaciones
