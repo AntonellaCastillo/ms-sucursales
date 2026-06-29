@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.math.BigDecimal;
+import lombok.NoArgsConstructor;     // ← agregar este import
+import lombok.AllArgsConstructor;
 
 // ENTIDAD SUCURSAL
 
 //Representa la tabla "sucursal" en la BD. Cada objeto es una fila.
 //@Data genera getters/setters automáticamente (Lombok)
+
 @Data
+@NoArgsConstructor //Crea un constructor vacío
+@AllArgsConstructor //Genera uno con todos los campos para no escribirlos a mano
 @Entity
 @Table (name = "sucursal")
 public class Sucursal 
