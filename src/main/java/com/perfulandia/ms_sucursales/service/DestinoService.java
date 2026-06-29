@@ -1,5 +1,6 @@
 package com.perfulandia.ms_sucursales.service;
 
+import com.perfulandia.ms_sucursales.exception.RecursoNoEncontradoException;
 import com.perfulandia.ms_sucursales.model.Destino;
 import com.perfulandia.ms_sucursales.model.EstadoDestino;
 import com.perfulandia.ms_sucursales.repository.DestinoRepository;
@@ -47,7 +48,7 @@ public class DestinoService
     public Destino marcarEstado(Long id, EstadoDestino nuevoEstado) 
     {
         Destino destino = destinoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("destino no existe"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("destino no existe"));
 
         destino.setEstado(nuevoEstado);
         return destinoRepository.save(destino);
