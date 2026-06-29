@@ -12,7 +12,8 @@ import java.util.Optional;
 
 @Service
 public class SucursalService 
-{
+{   
+    //Comunicacion con el Repositorio
     @Autowired
     private SucursalRepository sucursalRepository;
     
