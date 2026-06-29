@@ -1,5 +1,6 @@
 package com.perfulandia.ms_sucursales.service;
 
+import com.perfulandia.ms_sucursales.exception.RecursoNoEncontradoException;
 import com.perfulandia.ms_sucursales.model.Ruta;
 import com.perfulandia.ms_sucursales.repository.RutaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class RutaService {
     public Ruta actualizarRuta(Long id, Ruta ruta) 
     {
         Ruta existente = rutaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ruta no existe"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("ruta no existe"));
 
         existente.setIdTransportista(ruta.getIdTransportista());
         existente.setFecha(ruta.getFecha());
