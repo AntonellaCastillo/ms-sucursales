@@ -3,6 +3,9 @@ package com.perfulandia.ms_sucursales.controller;
 import com.perfulandia.ms_sucursales.model.Destino;
 import com.perfulandia.ms_sucursales.model.EstadoDestino;
 import com.perfulandia.ms_sucursales.service.DestinoService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +14,8 @@ import java.util.List;
 // Controlador REST de Destino
 @RestController
 @RequestMapping("/api/v1/destinos") // ruta base
-public class DestinoController {
+public class DestinoController 
+{
 
     // Comunicacion con el Service
     @Autowired
@@ -22,7 +26,7 @@ public class DestinoController {
     
     // POST: crear un destino (una parada)
     @PostMapping
-    public Destino crearDestino(@RequestBody Destino destino) 
+    public Destino crearDestino(@Valid @RequestBody Destino destino) 
     {
         return destinoService.guardarDestino(destino);
     }
@@ -44,7 +48,6 @@ public class DestinoController {
     }
 
     // GET especial (HU-56): listar los destinos de una ruta, en orden
-    // La URL queda /api/v1/destinos/ruta/5
     @GetMapping("/ruta/{idRuta}")
     public List<Destino> obtenerPorRuta(@PathVariable Long idRuta) 
     {
@@ -52,17 +55,11 @@ public class DestinoController {
     }
 
     // PUT especial (HU-57): marcar la parada como ENTREGADO o FALLIDO
-    // El nuevo estado llega como parámetro en la URL: /api/v1/destinos/5/estado?nuevoEstado=ENTREGADO
     @PutMapping("/{id}/estado")
     public ResponseEntity<Destino> marcarEstado(@PathVariable Long id,
                                                 @RequestParam EstadoDestino nuevoEstado) {
-        try 
-        {
-            Destino actualizado = destinoService.marcarEstado(id, nuevoEstado);
-            return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Destino actualizado = destinoService.marcarEstado(id, nuevoEstado);
+        return ResponseEntity.ok(actualizado);
     }
 
     // DELETE: eliminar un destino
