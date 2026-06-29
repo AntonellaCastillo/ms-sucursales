@@ -6,22 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import jakarta.validation.Valid;
 
 // Controlador REST de Ruta
 @RestController
 @RequestMapping("/api/v1/rutas") // ruta base
 public class RutaController {
 
-    // Comunicacion con el Service
+     // Comunicacion con el Service
     @Autowired
     private RutaService rutaService;
 
-    
-    //Endpoints
-    
     // POST: crear una ruta
     @PostMapping
-    public Ruta crearRuta(@RequestBody Ruta ruta) 
+    public Ruta crearRuta(@Valid @RequestBody Ruta ruta) 
     {
         return rutaService.guardarRuta(ruta);
     }
@@ -43,7 +41,6 @@ public class RutaController {
     }
 
     // GET especial (HU-56): listar las rutas de un transportista
-    // La URL queda /api/v1/rutas/transportista/5
     @GetMapping("/transportista/{idTransportista}")
     public List<Ruta> obtenerPorTransportista(@PathVariable Long idTransportista) 
     {
@@ -52,14 +49,10 @@ public class RutaController {
 
     // PUT: actualizar una ruta
     @PutMapping("/{id}")
-    public ResponseEntity<Ruta> actualizar(@PathVariable Long id, @RequestBody Ruta ruta) 
+    public ResponseEntity<Ruta> actualizar(@PathVariable Long id, @Valid @RequestBody Ruta ruta) 
     {
-        try {
-            Ruta actualizada = rutaService.actualizarRuta(id, ruta);
-            return ResponseEntity.ok(actualizada);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Ruta actualizada = rutaService.actualizarRuta(id, ruta);
+        return ResponseEntity.ok(actualizada);
     }
 
     // DELETE: eliminar una ruta
