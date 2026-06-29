@@ -43,7 +43,7 @@ public class SucursalService
     public Sucursal actualizarSucursal(Long id, Sucursal sucursal)
     {
         Sucursal existente = sucursalRepository.findById(id)
-        .orElseThrow(() -> new RecursoNoEncontradoException("... no existe"));
+        .orElseThrow(() -> new RecursoNoEncontradoException("sucursal no existe"));
         existente.setNombre(sucursal.getNombre());
         existente.setDireccion(sucursal.getDireccion());
         existente.setLatitud(sucursal.getLatitud());
