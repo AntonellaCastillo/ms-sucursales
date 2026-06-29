@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import com.perfulandia.ms_sucursales.exception.RecursoNoEncontradoException;
 
 
 
@@ -42,8 +43,7 @@ public class SucursalService
     public Sucursal actualizarSucursal(Long id, Sucursal sucursal)
     {
         Sucursal existente = sucursalRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("sucursal no existe"));
-        
+        .orElseThrow(() -> new RecursoNoEncontradoException("... no existe"));
         existente.setNombre(sucursal.getNombre());
         existente.setDireccion(sucursal.getDireccion());
         existente.setLatitud(sucursal.getLatitud());
