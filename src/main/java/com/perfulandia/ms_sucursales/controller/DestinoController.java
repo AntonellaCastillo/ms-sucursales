@@ -7,9 +7,11 @@ import com.perfulandia.ms_sucursales.service.DestinoService;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
 
 // Controlador REST de Destino
 @RestController
@@ -25,10 +27,12 @@ public class DestinoController
     //Endpoints 
     
     // POST: crear un destino (una parada)
+    // POST: crear un destino (una parada)
     @PostMapping
-    public Destino crearDestino(@Valid @RequestBody Destino destino) 
+    public ResponseEntity<Destino> crearDestino(@Valid @RequestBody Destino destino) 
     {
-        return destinoService.guardarDestino(destino);
+        Destino nuevo = destinoService.guardarDestino(destino);
+        return new ResponseEntity<>(nuevo, HttpStatus.CREATED); // 201
     }
 
     // GET: listar todos los destinos

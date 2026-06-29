@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.perfulandia.ms_sucursales.model.Sucursal;
@@ -30,10 +31,12 @@ public class SucursalController
     private SucursalService sucursalService;
 
     // Endpoint para guardar
+    // Endpoint para guardar
     @PostMapping
-    public Sucursal crearSucursal(@Valid @RequestBody Sucursal sucursal) 
+    public ResponseEntity<Sucursal> crearSucursal(@Valid @RequestBody Sucursal sucursal) 
     {
-        return sucursalService.guardarSucursal(sucursal);
+        Sucursal nueva = sucursalService.guardarSucursal(sucursal);
+        return new ResponseEntity<>(nueva, HttpStatus.CREATED); // 201
     }
 
     // Endpoint para listar

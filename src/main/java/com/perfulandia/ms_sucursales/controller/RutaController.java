@@ -3,10 +3,12 @@ package com.perfulandia.ms_sucursales.controller;
 import com.perfulandia.ms_sucursales.model.Ruta;
 import com.perfulandia.ms_sucursales.service.RutaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import jakarta.validation.Valid;
+
 
 // Controlador REST de Ruta
 @RestController
@@ -18,10 +20,12 @@ public class RutaController {
     private RutaService rutaService;
 
     // POST: crear una ruta
+    // POST: crear una ruta
     @PostMapping
-    public Ruta crearRuta(@Valid @RequestBody Ruta ruta) 
+    public ResponseEntity<Ruta> crearRuta(@Valid @RequestBody Ruta ruta) 
     {
-        return rutaService.guardarRuta(ruta);
+        Ruta nueva = rutaService.guardarRuta(ruta);
+        return new ResponseEntity<>(nueva, HttpStatus.CREATED); // 201
     }
 
     // GET: listar todas las rutas
