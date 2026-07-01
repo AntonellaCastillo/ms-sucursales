@@ -1,4 +1,4 @@
-package com.perfulandia.ms_sucursales;
+package com.perfulandia.ms_sucursales.msScursalesApplication;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
