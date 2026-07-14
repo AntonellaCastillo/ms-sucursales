@@ -2,6 +2,7 @@ package com.perfulandia.ms_sucursales.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -30,8 +31,11 @@ public class Destino {
     // RELACIÓN muchos a uno: muchos Destino pertenecen a UNA Ruta.
     // @JoinColumn crea la columna FK "id_ruta" en la tabla destino.
     // Esta es la relación REAL interna (Ruta y Destino viven en este mismo MS).
+    // @JsonIgnore: corta el bucle infinito al serializar. Cuando se pide una Ruta
+    //         con sus destinos, cada destino NO vuelve a incluir la ruta completa.
     @ManyToOne
     @JoinColumn(name = "id_ruta")
+    @JsonIgnore
     private Ruta ruta;
 
     // idEnvio: Id Externo (referencia a un Envio de OTRO microservicio).
